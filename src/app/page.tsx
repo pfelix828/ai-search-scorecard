@@ -92,7 +92,15 @@ export default function OverviewPage() {
         subtitle="A weekly summary of how visible five Adobe products are in the answers of five AI engines, tracked against quarterly targets and competitor brands."
         right={<Pill>Week ending {fullDate(latestWeekEnding)}</Pill>}
       />
-      <SimulatedDataNote className="mb-6" />
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-2">
+        <SimulatedDataNote />
+        <Link
+          href="/summary"
+          className="text-xs font-medium text-accent underline decoration-dotted underline-offset-2 hover:decoration-solid"
+        >
+          First visit? The executive summary covers the whole project in two minutes →
+        </Link>
+      </div>
 
       {/* 0. Decision-grade summary: the one-screen read a budget owner needs */}
       <Card className="mb-4 border-l-4 border-l-accent">

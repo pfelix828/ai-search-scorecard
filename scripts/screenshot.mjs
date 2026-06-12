@@ -7,6 +7,7 @@ const OUT = "/tmp/scorecard-shots";
 fs.mkdirSync(OUT, { recursive: true });
 
 const pages = [
+  ["summary", "/summary"],
   ["overview", "/"],
   ["category-quick-design", "/categories/quick-design"],
   ["prompts", "/prompts"],

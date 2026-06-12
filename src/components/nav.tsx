@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import clsx from "clsx";
 
 const items = [
+  { href: "/summary", label: "Executive Summary" },
   { href: "/", label: "Overview" },
   { href: "/categories", label: "Categories" },
   { href: "/prompts", label: "Prompt Panel" },
