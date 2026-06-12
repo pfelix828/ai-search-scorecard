@@ -91,6 +91,12 @@ export interface PromptEngineSnapshot {
   ciHi: number;
   k: number;
   n: number;
+  /** mention rate pooled over the last 6 weeks (the window prompt-level statements should quote) */
+  mr6w: number;
+  ci6wLo: number;
+  ci6wHi: number;
+  k6w: number;
+  n6w: number;
 }
 
 export interface Prompt {

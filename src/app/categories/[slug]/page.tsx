@@ -68,15 +68,15 @@ const NARRATIVES: Record<string, Narrative> = {
   },
   "genai-image": {
     severity: "opportunity",
-    title: "Firefly wins safety prompts but trails generic discovery",
-    body: "Firefly leads this panel on prompts about commercially safe AI images, where engines associate it with licensing protection. On generic discovery prompts such as the best AI image generator, it trails: in the latest simulated week, Firefly appears in 45% of ChatGPT answers versus about 71% for Midjourney and OpenAI GPT Image.",
+    title: "Firefly is strong on safety prompts but trails on generic discovery",
+    body: "Engines associate Firefly with licensing protection: pooled over the last six simulated weeks on ChatGPT, its mention rate is about 68% on the two commercial-safety prompts but 30% on the generic discovery prompt, the best AI image generator. At category level in the latest simulated week, Firefly appears in 45% of ChatGPT answers versus about 71% for Midjourney and OpenAI GPT Image.",
     action:
       "Suggested next step: keep the commercial-safety positioning and add comparison content aimed at the generic discovery prompts, which carry the largest simulated ask volume in this panel.",
   },
   "pdf-tools": {
     severity: "risk",
     title: "Acrobat dominates mentions while citations leak to how-to sites",
-    body: "Acrobat is mentioned in about 75% of sampled PDF answers, the strongest position in this category's panel. The cited sources tell a different story: in the latest simulated week, Smallpdf and iLovePDF how-to pages hold roughly 36% and 32% of citations, against about 19% for Adobe. Mentions that rest on competitor citations are fragile if engines re-rank their sources.",
+    body: "Acrobat is mentioned in about 75% of sampled PDF answers, the strongest position in this category's panel. The cited sources tell a different story: in the latest simulated week, Smallpdf and iLovePDF how-to pages hold roughly 32% and 29% of citations, against about 17% for Adobe. Mentions that rest on competitor citations are fragile if engines re-rank their sources.",
     action:
       "Suggested next step: publish task-level how-to pages for the highest-volume PDF prompts so engines can cite Adobe directly, and track citation share weekly alongside mention rate.",
   },

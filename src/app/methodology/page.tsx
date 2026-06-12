@@ -390,9 +390,8 @@ export default function MethodologyPage() {
             </table>
           </div>
           <P>
-            The point of stating the chain explicitly is to build
-            proxies and heuristics where direct attribution is not possible, and make every assumption visible enough
-            for a stakeholder to challenge.
+            The point of stating the chain explicitly is to build proxies and heuristics where direct attribution is
+            not possible, and to make every assumption visible enough for a stakeholder to challenge.
           </P>
         </div>
       </Card>
@@ -463,7 +462,7 @@ export default function MethodologyPage() {
           <P>
             The generator also plants narrative events so the pages have something honest to read: a help-content
             experiment that lifts treated Adobe Express prompts after mid-March, a Gemini model update that
-            destabilizes mention rates for about three weeks in April, a Photoshop sentiment dip during a simulated
+            depresses mention rates for about three weeks in April, a Photoshop sentiment dip during a simulated
             pricing news cycle, a Firefly gap on generic discovery prompts, and Acrobat citation leakage to
             competitor how-to content.
           </P>
@@ -575,8 +574,8 @@ export default function MethodologyPage() {
           some referral tracking. This framework is designed to extend that kind of foundation, not replace it. The
           three additions it argues for are uncertainty quantification (every rate carries an interval, so a weekly
           read can be defended in a budget conversation), controlled experiments (treated-vs-control prompt panels, so
-          content and PR work gets a real verdict instead of a correlation), and drift monitoring (model updates and
-          corpus refreshes show up as flagged volatility, not as phantom wins and losses). One more reason the
+          content and PR work gets a controlled read instead of a before/after correlation), and drift monitoring
+          (engine model updates get logged and annotated as measurement events, not read as phantom wins and losses). One more reason the
           citation metrics matter for the long game: the sources engines cite are dominated by evergreen content, so
           the tutorial or review published this quarter is next quarter&apos;s answer corpus. Citation-building
           compounds; campaign spikes do not.

@@ -253,7 +253,7 @@ function brandWeeklyP(cat, brand, engineId, w, promptFlags = {}) {
   // CapCut social-video dominance
   if (brand.id === "capcut" && promptFlags.capcutStrong) p += 0.2;
   if (brand.id === "premiere" && promptFlags.capcutStrong) p -= 0.15;
-  // Gemini model-update shock: depress + destabilize for ~3 weeks
+  // Gemini model-update shock: depress mention rates, recovering over ~3 weeks
   if (engineId === "gemini" && w >= GEMINI_SHOCK_WEEK) {
     const since = w - GEMINI_SHOCK_WEEK;
     const recovery = Math.min(1, since / 3);
@@ -337,6 +337,7 @@ for (let w = 0; w < N_WEEKS; w++) {
         }
       }
 
+      const cellRows = [];
       for (const brand of cat.brands) {
         const a = acc[brand.id];
         const mr = a.mentions / a.n;
@@ -345,20 +346,30 @@ for (let w = 0; w < N_WEEKS; w++) {
         const sent = a.sentN > 0 ? a.sentSum / a.sentN : null;
         const nEff = (a.n * a.n) / a.n2; // Kish effective sample size for the weighted proportion
         const ci = wilson(mr * nEff, nEff);
+        cellRows.push({ brand, mr, avgPos, cit, sent, ci, n: a.n });
+      }
+      // Citation shares are shares of one pool of cited sources, so tracked
+      // brands plus untracked sources (blogs, video, news) must sum to 1.
+      // Renormalize the cell when tracked brands would exceed 90%, reserving
+      // at least a 10% remainder for untracked sources.
+      const citTotal = cellRows.reduce((s, r) => s + r.cit, 0);
+      const citScale = citTotal > 0.9 ? 0.9 / citTotal : 1;
+      for (const r of cellRows) {
+        const cit = r.cit * citScale;
         weekly.push({
           w,
           week: weekEndings[w],
           c: cat.id,
           e: eng.id,
-          b: brand.id,
-          mr: round(mr),
-          ciLo: round(ci.lo),
-          ciHi: round(ci.hi),
-          pos: avgPos === null ? null : round(avgPos, 2),
+          b: r.brand.id,
+          mr: round(r.mr),
+          ciLo: round(r.ci.lo),
+          ciHi: round(r.ci.hi),
+          pos: r.avgPos === null ? null : round(r.avgPos, 2),
           cit: round(cit),
-          sent: sent === null ? null : round(sent, 2),
-          vs: round(visibilityScore(mr, avgPos ?? 4, cit, sent), 1),
-          n: a.n,
+          sent: r.sent === null ? null : round(r.sent, 2),
+          vs: round(visibilityScore(r.mr, r.avgPos ?? 4, cit, r.sent), 1),
+          n: r.n,
         });
       }
     }
@@ -376,6 +387,12 @@ const prompts = promptPanel.map((p, idx) => {
     const latest = series.find((r) => r.w === N_WEEKS - 1 && r.e === eng.id);
     const prev = series.find((r) => r.w === N_WEEKS - 2 && r.e === eng.id);
     const ci = wilson(latest.k, latest.n);
+    // pooled over the last 6 weeks: the window size the methodology says to
+    // read for prompt-level statements, since single weeks are noise at n=70
+    const recent = series.filter((r) => r.e === eng.id && r.w >= N_WEEKS - 6);
+    const k6 = recent.reduce((s, r) => s + r.k, 0);
+    const n6 = recent.reduce((s, r) => s + r.n, 0);
+    const ci6 = wilson(k6, n6);
     return {
       e: eng.id,
       mr: round(latest.k / latest.n),
@@ -384,6 +401,11 @@ const prompts = promptPanel.map((p, idx) => {
       ciHi: round(ci.hi),
       k: latest.k,
       n: latest.n,
+      mr6w: round(k6 / n6),
+      ci6wLo: round(ci6.lo),
+      ci6wHi: round(ci6.hi),
+      k6w: k6,
+      n6w: n6,
     };
   });
   // blended weekly mention rate across engines (usage-share weighted)
@@ -554,28 +576,36 @@ const shortDate = (iso) => {
 };
 const insights = [];
 {
-  // Express ChatGPT trend
-  const now = catEngineRow(LAST, "quick-design", "chatgpt", "adobe-express");
-  const pre = catEngineRow(EXPRESS_INTERVENTION_WEEK - 1, "quick-design", "chatgpt", "adobe-express");
+  // Express experiment lift, quoted on the pooled pre/post windows the
+  // methodology calls for rather than single-week endpoints
+  const tl = experiments[0].treatedLift;
+  const cl = experiments[0].controlLift;
+  const pts = (x) => `${x >= 0 ? "+" : ""}${(x * 100).toFixed(1)}`;
   insights.push({
     week: weekEndings[LAST],
     severity: "win",
     category: "quick-design",
-    title: `Express mention rate on ChatGPT up ${((now.mr - pre.mr) * 100).toFixed(1)} pts since the help-content restructure`,
-    body: `Category-level mention rate moved from ${(pre.mr * 100).toFixed(1)}% (week ending ${shortDate(pre.week)}) to ${(now.mr * 100).toFixed(1)}% (week ending ${shortDate(now.week)}), driven by the four treated prompts. Control prompts are flat, which supports a content-driven mechanism rather than a model-version effect. Recommended action: extend the same llms.txt + FAQ pattern to the PDF how-to cluster.`,
+    title: `Express mention rate up ${pts(tl.liftPts)} pts on treated prompts since the help-content restructure`,
+    body: `Pooled over six-week pre/post windows on ChatGPT and Perplexity, the four treated prompts moved from ${(tl.pre * 100).toFixed(1)}% to ${(tl.post * 100).toFixed(1)}% (${pts(tl.liftPts)} pts, 95% CI ${pts(tl.ciLo)} to ${pts(tl.ciHi)}), while the four control prompts stayed flat (${pts(cl.liftPts)} pts, 95% CI ${pts(cl.ciLo)} to ${pts(cl.ciHi)}). The flat control supports a content-driven mechanism rather than a model-version effect. Recommended action: extend the same llms.txt + FAQ pattern to the PDF how-to cluster.`,
     link: "/experiments",
   });
-  const ffP = catEngineRow(LAST, "genai-image", "perplexity", "firefly");
   const mj = catEngineRow(LAST, "genai-image", "chatgpt", "midjourney");
   const ff = catEngineRow(LAST, "genai-image", "chatgpt", "firefly");
+  // Within-brand contrast on pooled six-week windows: Firefly's own rate on
+  // the two commercial-safety suitability prompts vs the generic discovery
+  // prompt. (The panel tracks competitor rates at category level only, so no
+  // claim is made about which tool leads on individual prompts.)
+  const safety = prompts.filter((p) => p.category === "genai-image" && p.intent === "suitability");
+  const sK = safety.reduce((s, p) => s + p.perEngine.find((pe) => pe.e === "chatgpt").k6w, 0);
+  const sN = safety.reduce((s, p) => s + p.perEngine.find((pe) => pe.e === "chatgpt").n6w, 0);
   const discPrompt = prompts.find((p) => p.text === "What's the best AI image generator right now?");
   const discFf = discPrompt.perEngine.find((pe) => pe.e === "chatgpt");
   insights.push({
     week: weekEndings[LAST],
     severity: "opportunity",
     category: "genai-image",
-    title: "Firefly owns 'commercially safe' prompts but trails badly on generic discovery",
-    body: `On suitability prompts about commercial-safety, Firefly is the top-mentioned tool. At category level on ChatGPT, Firefly's mention rate (${(ff.mr * 100).toFixed(0)}%) sits well behind Midjourney (${(mj.mr * 100).toFixed(0)}%), and on the generic "best AI image generator" discovery prompt Firefly drops to ${(discFf.mr * 100).toFixed(0)}%. The differentiated claim is winning; the generic claim is not. Recommended action: concentrate content and PR on the licensing/safety wedge instead of head-to-head 'best generator' positioning.`,
+    title: "Firefly is far stronger on 'commercially safe' prompts than on generic discovery",
+    body: `Pooled over the last six simulated weeks on ChatGPT, Firefly's mention rate is ${((sK / sN) * 100).toFixed(0)}% on the two commercial-safety suitability prompts but ${(discFf.mr6w * 100).toFixed(0)}% on the generic "best AI image generator" discovery prompt. At category level on ChatGPT, Firefly (${(ff.mr * 100).toFixed(0)}%) sits well behind Midjourney (${(mj.mr * 100).toFixed(0)}%). The differentiated claim is performing; the generic claim is not. Recommended action: concentrate content and PR on the licensing/safety wedge instead of head-to-head 'best generator' positioning.`,
     link: "/categories/genai-image",
   });
   const acro = catEngineRow(LAST, "pdf-tools", "chatgpt", "acrobat");
@@ -588,14 +618,22 @@ const insights = [];
     body: `Acrobat's mention rate is ${(acro.mr * 100).toFixed(0)}% on ChatGPT, far ahead of the next PDF tool (Smallpdf at ${(smallpdf.mr * 100).toFixed(0)}%), yet on free how-to prompts the cited sources skew to Smallpdf and iLovePDF tutorials. Engines name Acrobat while linking elsewhere. Owned-citation share is the gap to close: answer-shaped how-to content on adobe.com/acrobat targeted at the top three how-to prompts.`,
     link: "/categories/pdf-tools",
   });
-  const gemNow = catEngineRow(LAST, "photo-editing", "gemini", "photoshop");
-  const gemPre = catEngineRow(GEMINI_SHOCK_WEEK - 1, "photo-editing", "gemini", "photoshop");
+  // Gemini shock stats computed from the data so the copy always matches:
+  // per-brand relative drop in the first shocked week vs the week before
+  const shockRels = weekly
+    .filter((r) => r.w === GEMINI_SHOCK_WEEK && r.e === "gemini")
+    .map((r) => {
+      const prev = weekly.find((q) => q.w === GEMINI_SHOCK_WEEK - 1 && q.e === "gemini" && q.c === r.c && q.b === r.b);
+      return (prev.mr - r.mr) / prev.mr;
+    });
+  const fell = shockRels.filter((x) => x > 0).sort((a, b) => a - b);
+  const medianRel = fell[Math.floor(fell.length / 2)];
   insights.push({
     week: weekEndings[GEMINI_SHOCK_WEEK + 1],
     severity: "watch",
     category: "all",
-    title: "Gemini model update destabilized mention rates across all categories",
-    body: `Week ending ${shortDate(weekEndings[GEMINI_SHOCK_WEEK])}, mention rates on Gemini dropped 15-25% relative for most tracked brands and run-to-run variance widened. This is why weekly reads carry confidence intervals: single-week engine-level moves during model updates are mostly noise. Partial recovery visible within three weeks; flagged to channel owners rather than escalated.`,
+    title: "Gemini model update depressed mention rates across all categories",
+    body: `Week ending ${shortDate(weekEndings[GEMINI_SHOCK_WEEK])}, mention rates on Gemini fell for ${fell.length} of ${shockRels.length} tracked brands, typically about ${(medianRel * 100).toFixed(0)}% relative, ranging from ${(fell[0] * 100).toFixed(0)}% to ${(fell[fell.length - 1] * 100).toFixed(0)}%. This is why weekly reads carry confidence intervals: single-week engine-level moves during model updates are mostly noise. Partial recovery visible within three weeks; the week was annotated as a model-update event for channel owners rather than escalated as brand losses.`,
     link: "/methodology",
   });
   insights.push({

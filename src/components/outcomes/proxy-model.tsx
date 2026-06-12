@@ -225,7 +225,7 @@ export function ProxyModel({
             caption="Signups times trial-to-paid rate."
           />
           <Output
-            label="gross new ARR-style proxy"
+            label="Gross new ARR proxy"
             value={money(gnarr)}
             caption="Illustrative gross new ARR proxy: new paying users times monthly price times 12, annualized from one week of new paying users."
           />
@@ -237,12 +237,13 @@ export function ProxyModel({
         </div>
 
         <p className="mt-3 text-xs text-muted">
-          <Term def="Gross new annualized recurring revenue: the yearly value of newly added subscriptions, before churn or downgrades.">
+          The{" "}
+          <Term def="The yearly value of newly added subscriptions, before churn or downgrades net it down.">
             gross new ARR
           </Term>{" "}
           and{" "}
           <Term def="Lifetime value: the revenue one customer generates over the time they stay subscribed.">LTV</Term>{" "}
-          here are proxies: directional estimates built from stated assumptions, useful for comparing
+          figures here are proxies: directional estimates built from stated assumptions, useful for comparing
           scenarios, not for booking revenue.
         </p>
       </Card>

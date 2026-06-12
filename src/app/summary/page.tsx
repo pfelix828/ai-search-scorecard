@@ -49,8 +49,10 @@ export default function SummaryPage() {
   const smallpdfMr = mr("pdf-tools", "smallpdf");
   const fireflyMr = mr("genai-image", "firefly");
   const midjourneyMr = mr("genai-image", "midjourney");
+  // Prompt-level figure quoted on the pooled 6-week window, per the
+  // methodology's rule that single prompt-weeks are noise at 70 runs.
   const genericPrompt = prompts.find((p) => p.id === "p09");
-  const fireflyGenericMr = genericPrompt?.perEngine.find((e) => e.e === "chatgpt")?.mr ?? 0;
+  const fireflyGenericMr = genericPrompt?.perEngine.find((e) => e.e === "chatgpt")?.mr6w ?? 0;
 
   const express = experiments.find((e) => e.id === "express-content")!;
   const tl = express.treatedLift!;
@@ -68,7 +70,7 @@ export default function SummaryPage() {
   const findings = [
     {
       severity: "win",
-      title: "Content changes move AI answers, and a control panel proves it",
+      title: "Content changes can move AI answers, and a control panel backs it up",
       body: `Restructured Adobe Express help content lifted treated prompts ${spts(tl.liftPts)} points against a flat control panel. That separates a content effect from an engine-wide drift, which a before/after read cannot do.`,
       link: "/experiments",
       linkLabel: "See the experiment",
@@ -82,8 +84,8 @@ export default function SummaryPage() {
     },
     {
       severity: "opportunity",
-      title: "Firefly wins the differentiated claim, not the generic one",
-      body: `Firefly leads on "commercially safe" prompts but reaches only ${pct(fireflyGenericMr)} on the generic best-image-generator prompt, in a category where Midjourney's mention rate is ${pct(midjourneyMr)} to Firefly's ${pct(fireflyMr)}. The data argues for concentrating on the licensing wedge.`,
+      title: "Firefly's strength is the differentiated claim, not the generic one",
+      body: `Firefly's mention rate runs far higher on "commercially safe" prompts than on generic discovery: ${pct(fireflyGenericMr)} on the generic best-image-generator prompt, pooled over the last six weeks, in a category where Midjourney's mention rate is ${pct(midjourneyMr)} to Firefly's ${pct(fireflyMr)}. The data argues for concentrating on the licensing wedge.`,
       link: "/categories/genai-image",
       linkLabel: "See the category",
     },
@@ -92,7 +94,7 @@ export default function SummaryPage() {
   const discipline = [
     {
       title: "Noise is labeled noise",
-      body: `Every mention rate is an estimate from limited samples and carries a Wilson 95% interval. When a simulated Gemini model update dropped rates 15 to 25 percent relative across all brands in one week, the system flagged volatility instead of declaring losses.`,
+      body: `Every mention rate is an estimate from limited samples and carries a Wilson 95% interval. When a simulated Gemini model update dropped mention rates for every tracked brand in one week, typically about 22 percent relative, the week was annotated as a model-update event instead of being reported as brand losses.`,
       link: "/methodology",
       linkLabel: "Sampling and uncertainty",
     },
@@ -237,7 +239,7 @@ export default function SummaryPage() {
               Overview: the weekly scorecard
             </Link>
             <Link href="/experiments" className="font-medium text-accent underline decoration-dotted underline-offset-2 hover:decoration-solid">
-              Experiments: the proof pattern
+              Experiments: the evidence pattern
             </Link>
             <Link href="/methodology" className="font-medium text-accent underline decoration-dotted underline-offset-2 hover:decoration-solid">
               Methodology: the framework and its limits

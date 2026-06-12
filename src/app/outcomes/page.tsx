@@ -84,15 +84,11 @@ export default function OutcomesPage() {
           <p>
             So instead of pretending we can track this click by click, this page connects visibility to outcomes
             through a short chain of stated assumptions. Each assumption is a slider you can move, and the sensitivity
-            table at the bottom shows which one moves the answer most. This is the standard approach when direct attribution is not possible:
-            proxies for outcomes like{" "}
+            table at the bottom shows which one moves the answer most. This is the standard approach when direct
+            attribution is not possible: proxies for outcomes like{" "}
             <Term def="Monthly active users: the count of distinct users active in a month.">MAU</Term>,{" "}
             <Term def="Lifetime value: the revenue one customer generates over the time they stay subscribed.">LTV</Term>{" "}
-            and{" "}
-            <Term def="Gross new annualized recurring revenue: the yearly value of newly added subscriptions, before churn or downgrades.">
-              gross new ARR
-            </Term>{" "}
-            where direct attribution is not possible.
+            and new annualized recurring revenue.
           </p>
         </div>
       </Card>
