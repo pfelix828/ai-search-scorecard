@@ -63,7 +63,7 @@ export default function OutcomesPage() {
     <div className="space-y-6">
       <PageHeader
         title="Outcomes"
-        subtitle="What AI search visibility is worth across the funnel. AI answers can move revenue in three places, not just one. This page models the acquisition arm honestly and names the other two as gaps rather than guessing at them."
+        subtitle="What AI search visibility is worth across the funnel. AI answers can move revenue in three places; this page models the acquisition arm and names the other two as honest gaps rather than guessing."
         right={<Pill>Latest week: {shortDate(latestWeekEnding)}</Pill>}
       />
       <SimulatedDataNote />

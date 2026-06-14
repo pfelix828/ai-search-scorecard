@@ -60,7 +60,7 @@ export default function TrustPage() {
     <div className="space-y-6">
       <PageHeader
         title="Answer Trust"
-        subtitle="Visibility says who gets mentioned and cited. This page measures the next axis: is what the engine says about the product correct, and does the page it cited actually back the claim. Sampled, human-judged, every rate with a confidence interval."
+        subtitle="The next axis past visibility: is what the engine says about the product correct, and does the cited page actually back the claim? Sampled, human-judged, every rate with a confidence interval."
         right={<Pill>Pooled window: {t.windowLabel}</Pill>}
       />
       <SimulatedDataNote />
