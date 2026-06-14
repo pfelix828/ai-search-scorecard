@@ -222,7 +222,7 @@ export default function TrustPage() {
 
       {/* 5. Defect ranking / early-warning feed */}
       <Card>
-        <CardTitle sub="Each row is the weakest correctness check for one prompt and engine, pooled over the window, ranked by how many weekly asks sit behind the gap. A wrong claim on a high-volume buying prompt outranks the same gap on a niche one.">
+        <CardTitle sub="One row per audited prompt: its weakest correctness check, on the engine where it is worst, pooled over the window, ranked by how many weekly asks sit behind the gap. A wrong claim on a high-volume buying prompt outranks the same gap on a niche one.">
           Where the wrong claims sit
         </CardTitle>
         <div className="overflow-x-auto">

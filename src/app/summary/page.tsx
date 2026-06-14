@@ -58,6 +58,7 @@ export default function SummaryPage() {
   const express = experiments.find((e) => e.id === "express-content")!;
   const tl = express.treatedLift!;
   const cl = express.controlLift!;
+  const did = express.did!;
 
   const stats = [
     { v: String(meta.categories.length), l: "Adobe products vs competitors" },
@@ -66,6 +67,8 @@ export default function SummaryPage() {
     { v: String(meta.weeks.length), l: "weeks of weekly samples" },
     { v: String(meta.runsPerPromptEngineWeek), l: "runs per prompt, engine, week" },
     { v: "95%", l: "confidence interval on every rate" },
+    { v: String(trust.adjudicatedPromptCount), l: "prompts on the accuracy audit" },
+    { v: String(trust.checks.length), l: "correctness checks tracked" },
   ];
 
   const findings = [
@@ -89,6 +92,13 @@ export default function SummaryPage() {
       body: `Firefly's mention rate runs far higher on "commercially safe" prompts than on generic discovery: ${pct(fireflyGenericMr)} on the generic best-image-generator prompt, pooled over the last six weeks, in a category where Midjourney's mention rate is ${pct(midjourneyMr)} to Firefly's ${pct(fireflyMr)}. The data argues for concentrating on the licensing wedge.`,
       link: "/categories/genai-image",
       linkLabel: "See the category",
+    },
+    {
+      severity: "risk",
+      title: "Visible and wrong at the same time",
+      body: `Acrobat is named in most PDF answers, yet its claim accuracy on the high-volume free-editing prompt fell from ${pct(trust.headline.pre.rate ?? 0)} to ${pct(trust.headline.dip.rate ?? 0)} during a stale-claim window while mention rate held. A visibility-only read scores that week as a win. Correctness is measured here, not assumed.`,
+      link: "/trust",
+      linkLabel: "See Answer Trust",
     },
   ];
 
@@ -159,7 +169,7 @@ export default function SummaryPage() {
             page. Visibility is the table stakes; correctness and worth are the frontier.
           </p>
         </div>
-        <div className="mt-4 grid grid-cols-2 gap-3 border-t border-border-subtle pt-4 sm:grid-cols-3 lg:grid-cols-6">
+        <div className="mt-4 grid grid-cols-2 gap-3 border-t border-border-subtle pt-4 sm:grid-cols-4 lg:grid-cols-4">
           {stats.map((s) => (
             <div key={s.l}>
               <div className="text-xl font-bold tabular-nums tracking-tight">{s.v}</div>
@@ -232,15 +242,26 @@ export default function SummaryPage() {
               95% CI {spts(cl.ciLo)} to {spts(cl.ciHi)}, consistent with no change
             </div>
           </div>
-          <div className="text-xs leading-relaxed text-muted sm:self-center">
-            The flat control line is the point: it supports a content-driven mechanism rather than an engine-wide
-            shift, which a simple before/after read could not show.
+          <div>
+            <div className="text-[11px] font-medium text-muted">Difference in differences, the estimand</div>
+            <div className="mt-0.5 text-lg font-bold tabular-nums tracking-tight text-emerald-700">
+              {spts(did.did)} pts
+            </div>
+            <div className="text-[11px] text-muted">
+              95% CI {spts(did.ciLo)} to {spts(did.ciHi)}, clears zero
+            </div>
           </div>
         </div>
+        <p className="mt-2 text-xs leading-relaxed text-muted">
+          The flat control line is the point: it supports a content-driven mechanism rather than an engine-wide shift.
+          The difference in differences nets the control change out of the treated change, and its interval clears zero,
+          so it is the number the experiment actually supports, not the raw treated lift, and it is the contrast a
+          before and after read could not produce.
+        </p>
       </Card>
 
-      {/* 3. Three findings */}
-      <div className="grid gap-3 lg:grid-cols-3">
+      {/* 3. Findings */}
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {findings.map((f) => (
           <Card key={f.title}>
             <SeverityBadge severity={f.severity} />
@@ -291,6 +312,12 @@ export default function SummaryPage() {
           <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs">
             <Link href="/" className="font-medium text-accent underline decoration-dotted underline-offset-2 hover:decoration-solid">
               Overview: the weekly scorecard
+            </Link>
+            <Link href="/trust" className="font-medium text-accent underline decoration-dotted underline-offset-2 hover:decoration-solid">
+              Answer Trust: the correctness axis
+            </Link>
+            <Link href="/outcomes" className="font-medium text-accent underline decoration-dotted underline-offset-2 hover:decoration-solid">
+              Outcomes: worth across the funnel
             </Link>
             <Link href="/experiments" className="font-medium text-accent underline decoration-dotted underline-offset-2 hover:decoration-solid">
               Experiments: the evidence pattern

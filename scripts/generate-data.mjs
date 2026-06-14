@@ -230,8 +230,22 @@ const promptPanel = [
 ];
 
 const volWeights = { high: 3, medium: 2, low: 1 };
-// Estimated weekly asks per prompt theme across all engines (demo assumption)
+// Estimated weekly asks per prompt theme across all engines (demo assumption).
+// The tier sets the magnitude; a deterministic per-prompt factor spreads values
+// within a tier so this reads like an estimate, not three round buckets.
 const volAsks = { high: 40000, medium: 12000, low: 3000 };
+// FNV-1a unit hash of the prompt text: deterministic, 0..1, consumes no RNG, so
+// the rest of the seeded dataset is unaffected by per-prompt ask volumes.
+const hashUnit = (s) => {
+  let h = 2166136261;
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return (h >>> 0) / 4294967296;
+};
+// 0.55x .. 1.45x of the tier base, rounded to the nearest 100.
+const promptAsks = promptPanel.map((p) => Math.round((volAsks[p.vol] * (0.55 + 0.9 * hashUnit(p.text))) / 100) * 100);
 
 // ---------------------------------------------------------------------------
 // Mention-rate model per (week, engine, category, brand)
@@ -425,7 +439,7 @@ const prompts = promptPanel.map((p, idx) => {
     category: p.cat,
     intent: p.intent,
     volume: p.vol,
-    estWeeklyAsks: volAsks[p.vol],
+    estWeeklyAsks: promptAsks[idx],
     treated: !!p.treated,
     adobeBrand: adobeBrand.id,
     adobeBrandName: adobeBrand.name,
@@ -926,31 +940,33 @@ const trustDefects = [];
 for (const p of adjudicatedPrompts) {
   const cat = categories.find((c) => c.id === p.cat);
   const adobe = cat.brands.find((b) => b.adobe);
+  // The single worst (engine, check) for this prompt over the window, so the
+  // table shows one row per prompt rather than every engine of the worst few.
+  let worst = null;
   for (const eng of engines) {
-    const rows = trustWeekly.filter((r) => r.pIdx === p.idx && r.e === eng.id && r.w >= POOL_FROM);
-    const pooled = poolTrust(rows);
+    const pooled = poolTrust(trustWeekly.filter((r) => r.pIdx === p.idx && r.e === eng.id && r.w >= POOL_FROM));
     const checks = [
       { key: "claimAccuracy", label: "claim accuracy", ...pooled.claimAccuracy },
       { key: "citationSupport", label: "citation support", ...pooled.citationSupport },
       { key: "attributionCorrectness", label: "attribution correctness", ...pooled.attributionCorrectness },
     ];
-    const weakest = checks.reduce((a, b) => (b.rate < a.rate ? b : a));
-    trustDefects.push({
-      promptText: p.text,
-      category: p.cat,
-      intent: p.intent,
-      estWeeklyAsks: volAsks[p.vol],
-      brand: adobe.id,
-      brandName: adobe.name,
-      engine: eng.id,
-      check: weakest.key,
-      checkLabel: weakest.label,
-      rate: weakest.rate,
-      lo: weakest.lo,
-      hi: weakest.hi,
-      missPts: round(1 - weakest.rate),
-    });
+    for (const c of checks) if (!worst || c.rate < worst.rate) worst = { ...c, engine: eng.id };
   }
+  trustDefects.push({
+    promptText: p.text,
+    category: p.cat,
+    intent: p.intent,
+    brand: adobe.id,
+    brandName: adobe.name,
+    engine: worst.engine,
+    estWeeklyAsks: promptAsks[p.idx],
+    check: worst.key,
+    checkLabel: worst.label,
+    rate: worst.rate,
+    lo: worst.lo,
+    hi: worst.hi,
+    missPts: round(1 - worst.rate),
+  });
 }
 trustDefects.sort((a, b) => (1 - b.rate) * b.estWeeklyAsks - (1 - a.rate) * a.estWeeklyAsks);
 const trustDefectsTop = trustDefects.slice(0, 8);
