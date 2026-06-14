@@ -104,7 +104,7 @@ export default function OverviewPage() {
 
       {/* 0. Decision-grade summary: the one-screen read a budget owner needs */}
       <Card className="mb-4 border-l-4 border-l-accent">
-        <CardTitle sub="One number, its movement, and the single action it supports. The detail behind every figure is one click away.">
+        <CardTitle sub="One number, its movement, and the single action it supports.">
           The week in one read
         </CardTitle>
         <div className="grid gap-5 sm:grid-cols-3">
@@ -135,12 +135,6 @@ export default function OverviewPage() {
           <div>
             <div className="text-[11px] font-medium text-muted">Top action on the table</div>
             <p className="mt-1 text-xs font-semibold leading-snug tracking-tight">{topAction.title}</p>
-            <Link
-              href={topAction.link}
-              className="mt-1 inline-block text-xs font-medium text-accent underline decoration-dotted underline-offset-2 hover:decoration-solid"
-            >
-              Supporting detail
-            </Link>
           </div>
         </div>
       </Card>
@@ -150,8 +144,8 @@ export default function OverviewPage() {
         {productSeries.map(({ cat, brand, current, previous, target }) => {
           const towardTarget = target ? Math.min(100, (current / target.q3Target) * 100) : 0;
           return (
-            <Link key={cat.id} href={`/categories/${cat.id}`} className="group">
-              <Card className="h-full transition-colors group-hover:border-zinc-300">
+            <div key={cat.id}>
+              <Card className="h-full">
                 <div className="text-[11px] text-muted">{cat.name}</div>
                 <div className="mt-0.5 text-sm font-semibold tracking-tight">{brand.name}</div>
                 <div className="mt-2 flex items-baseline gap-2">
@@ -179,7 +173,7 @@ export default function OverviewPage() {
                   </div>
                 ) : null}
               </Card>
-            </Link>
+            </div>
           );
         })}
       </div>
@@ -204,11 +198,11 @@ export default function OverviewPage() {
       {/* 4. Insights + how to read */}
       <div className="mt-4 grid gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">
-          <CardTitle sub="Newest first. Each item links to the page with the supporting detail.">
+          <CardTitle sub="Newest first — the three most recent.">
             Latest insights
           </CardTitle>
           <ul className="divide-y divide-border-subtle">
-            {sortedInsights.map((ins) => (
+            {sortedInsights.slice(0, 3).map((ins) => (
               <li key={`${ins.week}-${ins.title}`} className="py-3 first:pt-0 last:pb-0">
                 <div className="flex flex-wrap items-center gap-2">
                   <SeverityBadge severity={ins.severity} />
@@ -219,12 +213,6 @@ export default function OverviewPage() {
                 </div>
                 <p className="mt-1.5 text-sm font-semibold tracking-tight">{ins.title}</p>
                 <p className="mt-1 text-xs leading-relaxed text-muted">{ins.body}</p>
-                <Link
-                  href={ins.link}
-                  className="mt-1.5 inline-block text-xs font-medium text-accent underline decoration-dotted underline-offset-2 hover:decoration-solid"
-                >
-                  View detail
-                </Link>
               </li>
             ))}
           </ul>

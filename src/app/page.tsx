@@ -33,7 +33,7 @@ export const metadata: Metadata = {
 const spts = (x: number) => `${x >= 0 ? "+" : ""}${(x * 100).toFixed(1)}`;
 
 export default function HomePage() {
-  // Same portfolio math as the weekly scorecard's lead card.
+  // Same portfolio math as the scorecard's lead card.
   const products = meta.categories.map((cat) => {
     const brand = adobeBrandOf(cat.id)!;
     const points = blendedSeries(cat.id, brand.id, (r) => r.vs);
@@ -44,14 +44,12 @@ export default function HomePage() {
   const portfolioNow = products.reduce((s, p) => s + p.current, 0) / products.length;
   const onPace = products.filter((p) => p.target && p.current >= p.target.q3Target * 0.9).length;
 
-  // Finding figures, computed from the same rows the detail pages render.
+  // Finding figures, computed from the same rows the data is generated from.
   const mr = (c: string, b: string) => weeklyRows({ w: LAST_WEEK, c, e: "chatgpt", b })[0]?.mr ?? 0;
   const acrobatMr = mr("pdf-tools", "acrobat");
   const smallpdfMr = mr("pdf-tools", "smallpdf");
   const fireflyMr = mr("genai-image", "firefly");
   const midjourneyMr = mr("genai-image", "midjourney");
-  // Prompt-level figure quoted on the pooled 6-week window, per the
-  // methodology's rule that single prompt-weeks are noise at 70 runs.
   const genericPrompt = prompts.find((p) => p.id === "p09");
   const fireflyGenericMr = genericPrompt?.perEngine.find((e) => e.e === "chatgpt")?.mr6w ?? 0;
 
@@ -74,29 +72,21 @@ export default function HomePage() {
       severity: "win",
       title: "Content changes can move AI answers — with a control panel behind it",
       body: `Restructured Adobe Express help content lifted treated prompts ${spts(tl.liftPts)} pts against a flat control panel — a content effect separated from engine-wide drift, which a before/after read can't do.`,
-      link: "/experiments",
-      linkLabel: "The experiment",
     },
     {
       severity: "risk",
       title: "Acrobat is named but not linked",
       body: `Acrobat appears in ${pct(acrobatMr)} of sampled ChatGPT answers vs Smallpdf at ${pct(smallpdfMr)} — but on free how-to prompts the cited sources skew to competitor tutorials, and the citation carries the click.`,
-      link: "/categories/pdf-tools",
-      linkLabel: "The citation gap",
     },
     {
       severity: "opportunity",
       title: "Firefly's strength is the differentiated claim",
       body: `Firefly shows far higher on "commercially safe" prompts than on generic discovery (${pct(fireflyGenericMr)} on the generic best-image-generator prompt, where Midjourney runs ${pct(midjourneyMr)} to Firefly's ${pct(fireflyMr)}). The data argues for the licensing wedge.`,
-      link: "/categories/genai-image",
-      linkLabel: "The category",
     },
     {
       severity: "risk",
       title: "Visible and wrong at the same time",
       body: `Acrobat's claim accuracy on a high-volume prompt fell from ${pct(trust.headline.pre.rate ?? 0)} to ${pct(trust.headline.dip.rate ?? 0)} during a stale-claim window while mention rate held. A visibility-only read scores that week as a win.`,
-      link: "/trust",
-      linkLabel: "Answer Trust",
     },
   ];
 
@@ -104,20 +94,14 @@ export default function HomePage() {
     {
       title: "Noise is labeled noise",
       body: `Every rate carries a Wilson 95% interval. When a simulated Gemini update dropped mention rates for every brand one week, it was annotated as a model event — not reported as brand losses.`,
-      link: "/methodology",
-      linkLabel: "Sampling & uncertainty",
     },
     {
       title: "Nulls are reported as nulls",
       body: `A PR push lifted Firefly's citation share on Perplexity and did nothing detectable on ChatGPT. The split is the finding: earned citations move citation-driven engines first.`,
-      link: "/experiments",
-      linkLabel: "The honest null",
     },
     {
       title: "Dollars come with assumptions attached",
       body: `No engine reports impressions, so the revenue view models the acquisition arm with every assumption on a slider — and names the upgrade and existing-customer arms as gaps rather than minting numbers.`,
-      link: "/outcomes",
-      linkLabel: "Worth across the funnel",
     },
   ];
 
@@ -125,7 +109,7 @@ export default function HomePage() {
     <div className="space-y-4">
       <PageHeader
         title="AI Search Visibility Scorecard"
-        subtitle="Measuring — and growing — brand visibility in AI answer engines. Five Adobe products against competitors, five engines, 26 weeks. The whole project in two minutes; every receipt is one click away."
+        subtitle="Measuring — and growing — brand visibility in AI answer engines. Five Adobe products against competitors, five engines, 26 weeks. The whole project in about two minutes."
         right={<Pill>Week ending {shortDate(latestWeekEnding)}, {latestWeekEnding.slice(0, 4)}</Pill>}
       />
       <SimulatedDataNote className="-mt-4" />
@@ -142,11 +126,10 @@ export default function HomePage() {
             against control panels, and ties visibility to revenue through assumptions stated on the page.
           </p>
           <p>
-            It&apos;s built to extend a visibility stack a team already has, not replace it, and it speaks that
-            vocabulary on purpose. The real work is the two questions a visibility tool can&apos;t answer: is the answer
-            actually <Link href="/trust" className="font-medium text-accent underline decoration-dotted underline-offset-2 hover:decoration-solid">true</Link>, and what is it{" "}
-            <Link href="/outcomes" className="font-medium text-accent underline decoration-dotted underline-offset-2 hover:decoration-solid">worth</Link>{" "}
-            across the funnel. Visibility is table stakes; correctness and worth are the frontier.
+            It extends a visibility stack a team already has, not replaces it. The real work is the two questions a
+            visibility tool can&apos;t answer: is the answer actually <strong className="font-semibold text-foreground">true</strong>,
+            and what is it <strong className="font-semibold text-foreground">worth</strong> across the funnel.
+            Visibility is table stakes; correctness and worth are the frontier.
           </p>
         </div>
         <div className="mt-4 grid grid-cols-3 gap-3 border-t border-border-subtle pt-4 sm:grid-cols-6">
@@ -159,7 +142,7 @@ export default function HomePage() {
         </div>
       </Card>
 
-      {/* 2. The frontier past visibility — the differentiator, kept */}
+      {/* 2. The frontier past visibility — the differentiator */}
       <div className="grid gap-3 md:grid-cols-2">
         <Card>
           <p className="text-sm font-semibold tracking-tight">Is it true?</p>
@@ -168,9 +151,6 @@ export default function HomePage() {
             fell from {pct(trust.headline.pre.rate ?? 0)} to {pct(trust.headline.dip.rate ?? 0)} during a stale-claim
             window — measured as a sampled, human-judged audit with confidence intervals, not assumed.
           </p>
-          <Link href="/trust" className="mt-2 inline-block text-xs font-medium text-accent underline decoration-dotted underline-offset-2 hover:decoration-solid">
-            Answer Trust: the correctness axis
-          </Link>
         </Card>
         <Card>
           <p className="text-sm font-semibold tracking-tight">What is it worth?</p>
@@ -179,9 +159,6 @@ export default function HomePage() {
             acquisition arm is modeled end to end with every assumption on a slider; the other two are named as honest
             gaps, because sizing them needs data this demo doesn&apos;t have.
           </p>
-          <Link href="/outcomes" className="mt-2 inline-block text-xs font-medium text-accent underline decoration-dotted underline-offset-2 hover:decoration-solid">
-            Outcomes: worth across the funnel
-          </Link>
         </Card>
       </div>
 
@@ -215,16 +192,13 @@ export default function HomePage() {
         </p>
       </Card>
 
-      {/* 4. Findings */}
+      {/* 4. Findings — self-contained evidence, no out-links */}
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {findings.map((f) => (
           <Card key={f.title}>
             <SeverityBadge severity={f.severity} />
             <p className="mt-2.5 text-sm font-semibold leading-snug tracking-tight">{f.title}</p>
             <p className="mt-1.5 text-xs leading-relaxed text-muted">{f.body}</p>
-            <Link href={f.link} className="mt-2 inline-block text-xs font-medium text-accent underline decoration-dotted underline-offset-2 hover:decoration-solid">
-              {f.linkLabel}
-            </Link>
           </Card>
         ))}
       </div>
@@ -239,15 +213,12 @@ export default function HomePage() {
             <div key={d.title}>
               <p className="text-sm font-semibold tracking-tight">{d.title}</p>
               <p className="mt-1.5 text-xs leading-relaxed text-muted">{d.body}</p>
-              <Link href={d.link} className="mt-1.5 inline-block text-xs font-medium text-accent underline decoration-dotted underline-offset-2 hover:decoration-solid">
-                {d.linkLabel}
-              </Link>
             </div>
           ))}
         </div>
       </Card>
 
-      {/* 6. This week + where to go deeper */}
+      {/* 6. This week + the two places to go next */}
       <Card>
         <div className="flex flex-wrap items-center justify-between gap-3">
           <p className="text-sm text-foreground/85">
@@ -258,9 +229,14 @@ export default function HomePage() {
             <span className="font-bold tabular-nums">{score(portfolioNow)}</span>, {onPace} of {products.length} products
             at 90%+ of their Q3 FY26 target.
           </p>
-          <Link href="/overview" className="text-sm font-medium text-accent underline decoration-dotted underline-offset-2 hover:decoration-solid">
-            Open the live weekly scorecard →
-          </Link>
+          <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
+            <Link href="/overview" className="font-medium text-accent underline decoration-dotted underline-offset-2 hover:decoration-solid">
+              See the live scorecard →
+            </Link>
+            <Link href="/methodology" className="font-medium text-accent underline decoration-dotted underline-offset-2 hover:decoration-solid">
+              How it works →
+            </Link>
+          </div>
         </div>
       </Card>
     </div>

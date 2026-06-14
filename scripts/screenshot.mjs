@@ -8,11 +8,8 @@ fs.mkdirSync(OUT, { recursive: true });
 
 const pages = [
   ["home-summary", "/"],
-  ["overview", "/overview"],
-  ["trust", "/trust"],
-  ["outcomes", "/outcomes"],
-  ["experiments", "/experiments"],
-  ["methodology", "/methodology"],
+  ["scorecard", "/overview"],
+  ["how-it-works", "/methodology"],
 ];
 
 const browser = await chromium.launch();
