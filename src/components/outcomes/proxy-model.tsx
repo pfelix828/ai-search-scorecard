@@ -141,8 +141,8 @@ export function ProxyModel({
     <>
       <Card>
         <div className="flex flex-wrap items-start justify-between gap-2">
-          <CardTitle sub="Move the sliders. Every output below recomputes live, and every output is a modeled estimate, not a measurement.">
-            The proxy chain: sessions to signups to revenue
+          <CardTitle sub="Arm 1 of the funnel, the acquisition arm, modeled end to end. Move the sliders. Every output below recomputes live, and every output is a modeled estimate, not a measurement.">
+            New-user acquisition: sessions to signups to revenue
           </CardTitle>
           <button
             type="button"

@@ -183,17 +183,17 @@ const intents = ["discovery", "evaluation", "how-to", "suitability"];
 // engines (High/Medium/Low buckets used for weighting).
 const promptPanel = [
   // quick-design
-  { cat: "quick-design", text: "What's the best free tool to make social media posts?", intent: "discovery", vol: "high", treated: true },
+  { cat: "quick-design", text: "What's the best free tool to make social media posts?", intent: "discovery", vol: "high", treated: true, adjudicated: true },
   { cat: "quick-design", text: "Adobe Express vs Canva: which should I use?", intent: "evaluation", vol: "high", treated: false },
   { cat: "quick-design", text: "How do I make an Instagram story with my brand colors?", intent: "how-to", vol: "medium", treated: true },
-  { cat: "quick-design", text: "Best design app for a small business owner with no design skills?", intent: "suitability", vol: "high", treated: true },
+  { cat: "quick-design", text: "Best design app for a small business owner with no design skills?", intent: "suitability", vol: "high", treated: true, adjudicated: true },
   { cat: "quick-design", text: "Quickest way to resize one design for every social platform?", intent: "how-to", vol: "medium", treated: true },
   { cat: "quick-design", text: "What tool should a marketing team use for branded templates?", intent: "suitability", vol: "medium", treated: false },
   { cat: "quick-design", text: "Free Canva alternatives worth trying?", intent: "discovery", vol: "medium", treated: false },
   { cat: "quick-design", text: "Best tool to design a flyer in under ten minutes?", intent: "discovery", vol: "low", treated: false },
   // genai-image
-  { cat: "genai-image", text: "What's the best AI image generator right now?", intent: "discovery", vol: "high" },
-  { cat: "genai-image", text: "Which AI image tool is safe for commercial use?", intent: "suitability", vol: "medium", fireflyStrong: true },
+  { cat: "genai-image", text: "What's the best AI image generator right now?", intent: "discovery", vol: "high", adjudicated: true },
+  { cat: "genai-image", text: "Which AI image tool is safe for commercial use?", intent: "suitability", vol: "medium", fireflyStrong: true, adjudicated: true },
   { cat: "genai-image", text: "Adobe Firefly vs Midjourney: strengths and weaknesses?", intent: "evaluation", vol: "medium" },
   { cat: "genai-image", text: "How do I generate product photos with AI for my store?", intent: "how-to", vol: "medium" },
   { cat: "genai-image", text: "Best AI image tool that won't get me sued over copyright?", intent: "suitability", vol: "medium", fireflyStrong: true },
@@ -201,8 +201,8 @@ const promptPanel = [
   { cat: "genai-image", text: "How can I extend the background of a photo with AI?", intent: "how-to", vol: "medium", fireflyStrong: true },
   { cat: "genai-image", text: "Cheapest way to generate marketing images with AI?", intent: "discovery", vol: "medium" },
   // pdf-tools
-  { cat: "pdf-tools", text: "What's the best PDF editor?", intent: "discovery", vol: "high" },
-  { cat: "pdf-tools", text: "How do I edit a PDF for free?", intent: "how-to", vol: "high", citationLeak: true },
+  { cat: "pdf-tools", text: "What's the best PDF editor?", intent: "discovery", vol: "high", adjudicated: true },
+  { cat: "pdf-tools", text: "How do I edit a PDF for free?", intent: "how-to", vol: "high", citationLeak: true, adjudicated: true, accuracyRisk: true },
   { cat: "pdf-tools", text: "Adobe Acrobat vs Smallpdf: is Acrobat worth it?", intent: "evaluation", vol: "medium" },
   { cat: "pdf-tools", text: "How do I combine several PDFs into one file?", intent: "how-to", vol: "high", citationLeak: true },
   { cat: "pdf-tools", text: "Best PDF tool for a small law office?", intent: "suitability", vol: "low" },
@@ -210,17 +210,17 @@ const promptPanel = [
   { cat: "pdf-tools", text: "Is there a good free alternative to Adobe Acrobat?", intent: "discovery", vol: "high", citationLeak: true },
   { cat: "pdf-tools", text: "Best way to e-sign documents?", intent: "discovery", vol: "medium" },
   // photo-editing
-  { cat: "photo-editing", text: "What's the best photo editing software?", intent: "discovery", vol: "high" },
+  { cat: "photo-editing", text: "What's the best photo editing software?", intent: "discovery", vol: "high", adjudicated: true },
   { cat: "photo-editing", text: "Photoshop vs free editors like Photopea: what do I give up?", intent: "evaluation", vol: "medium" },
   { cat: "photo-editing", text: "How do I remove the background from a photo?", intent: "how-to", vol: "high" },
   { cat: "photo-editing", text: "Best photo editor for a beginner photographer?", intent: "suitability", vol: "medium" },
   { cat: "photo-editing", text: "How do I remove a person from a photo?", intent: "how-to", vol: "medium" },
-  { cat: "photo-editing", text: "Is Photoshop still worth the subscription?", intent: "evaluation", vol: "medium", priceSensitive: true },
+  { cat: "photo-editing", text: "Is Photoshop still worth the subscription?", intent: "evaluation", vol: "medium", priceSensitive: true, adjudicated: true },
   { cat: "photo-editing", text: "Best free photo editing app on the web?", intent: "discovery", vol: "medium" },
   { cat: "photo-editing", text: "How do I batch-edit hundreds of photos quickly?", intent: "how-to", vol: "low" },
   // video-editing
-  { cat: "video-editing", text: "What's the best video editing software?", intent: "discovery", vol: "high" },
-  { cat: "video-editing", text: "Best video editor for TikTok and Reels?", intent: "suitability", vol: "high", capcutStrong: true },
+  { cat: "video-editing", text: "What's the best video editing software?", intent: "discovery", vol: "high", adjudicated: true },
+  { cat: "video-editing", text: "Best video editor for TikTok and Reels?", intent: "suitability", vol: "high", capcutStrong: true, adjudicated: true },
   { cat: "video-editing", text: "Premiere Pro vs DaVinci Resolve for a YouTuber?", intent: "evaluation", vol: "medium" },
   { cat: "video-editing", text: "How do I auto-caption a video?", intent: "how-to", vol: "high", capcutStrong: true },
   { cat: "video-editing", text: "Best video editor for a marketing team?", intent: "suitability", vol: "medium" },
@@ -469,6 +469,32 @@ const outcomeAssumptions = {
   trialToPaid: 0.11,
   arpuMonthly: 14.0,
   grossMarginMonths: 24, // LTV horizon in months for the proxy
+  // The funnel has three arms where AI search can move revenue. This demo
+  // models only the acquisition arm honestly (the proxy chain below). The
+  // other two are shown as labeled gaps, never as fabricated dollars: minting
+  // an expansion ARR figure off an invented existing-customer volume would be
+  // exactly the false precision this app avoids everywhere else. Arm names are
+  // plain and owned by the app, not anyone's internal funnel taxonomy.
+  worthArms: [
+    {
+      key: "acquisition",
+      label: "New-user acquisition",
+      status: "modeled",
+      note: "Modeled below: AI-influenced sessions to signups to new paying users to a gross-new-ARR proxy, every assumption on a slider.",
+    },
+    {
+      key: "existing-customer-growth",
+      label: "Existing-customer growth",
+      status: "scaffolded",
+      note: "Not modeled here. Existing subscribers ask engines how-to and capability questions and can adopt another app or add seats. Honestly sizing this needs in-product feature-adoption events and cross-product entitlement joins this demo does not have. Modeling it from a made-up touch volume would be false precision, so it is left as a stated gap.",
+    },
+    {
+      key: "plan-and-price",
+      label: "Plan and price upgrade",
+      status: "scaffolded",
+      note: "Not modeled here. AI answers that surface premium capability can shift which plan a new buyer lands on. Sizing this needs free-to-paid, plan-mix, and finance-agreed value-per-plan data, so it is left as a stated gap rather than guessed.",
+    },
+  ],
 };
 
 // ---------------------------------------------------------------------------
@@ -525,6 +551,38 @@ function liftStats(series, interventionWeek, preWindow = 6, postWindow = 6) {
   };
 }
 
+// Treated-minus-control difference in differences: the actual estimand the
+// experiment is after, with a CI on the contrast itself. Reading "treated CI
+// clears zero while control stays flat" is the difference-of-significance
+// error; this computes (treated change - control change) and its standard
+// error directly from the four pooled proportions.
+function didStats(treated, control, interventionWeek, preWindow = 6, postWindow = 6) {
+  const pool = (series, lo, hi) => {
+    const rows = series.filter((r) => r.w >= lo && r.w <= hi);
+    const k = rows.reduce((s, r) => s + (r.k ?? 0), 0);
+    const n = rows.reduce((s, r) => s + (r.n ?? 0), 0);
+    return { k, n, p: n ? k / n : 0 };
+  };
+  const tPre = pool(treated, interventionWeek - preWindow, interventionWeek - 1);
+  const tPost = pool(treated, interventionWeek + 1, interventionWeek + postWindow);
+  const cPre = pool(control, interventionWeek - preWindow, interventionWeek - 1);
+  const cPost = pool(control, interventionWeek + 1, interventionWeek + postWindow);
+  if (!tPre.n || !tPost.n || !cPre.n || !cPost.n) return null;
+  const dTreated = tPost.p - tPre.p;
+  const dControl = cPost.p - cPre.p;
+  const did = dTreated - dControl;
+  const v = (x) => (x.p * (1 - x.p)) / x.n;
+  const se = Math.sqrt(v(tPre) + v(tPost) + v(cPre) + v(cPost));
+  return {
+    treatedDelta: round(dTreated),
+    controlDelta: round(dControl),
+    did: round(did),
+    se: round(se, 4),
+    ciLo: round(did - 1.96 * se),
+    ciHi: round(did + 1.96 * se),
+  };
+}
+
 const experiments = [
   {
     id: "express-content",
@@ -539,6 +597,7 @@ const experiments = [
     control: expressControl,
     treatedLift: liftStats(expressTreated, EXPRESS_INTERVENTION_WEEK),
     controlLift: liftStats(expressControl, EXPRESS_INTERVENTION_WEEK),
+    did: didStats(expressTreated, expressControl, EXPRESS_INTERVENTION_WEEK),
     readout:
       "Treated prompts rose ~12-14 pts vs a flat control panel. Because answer engines refresh retrieval corpora on different cadences, the lift ramped over ~4 weeks rather than stepping. Next iteration: replicate on the PDF panel where citation leakage to competitor how-to content is the gap.",
     caveats:
@@ -715,6 +774,273 @@ const answers = {
 };
 
 // ---------------------------------------------------------------------------
+// Answer Trust: a sampled, human-adjudicated correctness audit
+//
+// Visibility metrics say who gets mentioned and cited. They do not say whether
+// what the engine said is correct. This audit samples answers on a subset of
+// high-value prompts and scores each on three checks against a maintained
+// ground-truth sheet. It is a measurement-and-adjudication design (a human
+// judges a small sample against a written rubric), NOT an automated fact
+// checker. Judged samples are deliberately small, so every reported rate pools
+// a multi-week window and carries a Wilson 95% interval, like every other rate
+// in the app. All values here are simulated parameters.
+// ---------------------------------------------------------------------------
+const JUDGED_PER_PROMPT_ENGINE_WEEK = 12; // adjudication is expensive: small sample
+const TRUST_WINDOW = 6; // pool the last 6 weeks for every reported rate
+const ACROBAT_ACCURACY_DIP_WEEK = 16; // planted: a stale free-tier/price claim appears
+
+// Standing per-product pass rates for the three checks (demo parameters).
+const trustBaseline = {
+  "adobe-express": { acc: 0.93, sup: 0.86, att: 0.94 },
+  firefly: { acc: 0.91, sup: 0.85, att: 0.8 },
+  acrobat: { acc: 0.92, sup: 0.83, att: 0.93 },
+  photoshop: { acc: 0.94, sup: 0.88, att: 0.95 },
+  premiere: { acc: 0.93, sup: 0.87, att: 0.94 },
+};
+// Engine multipliers: Perplexity is citation-forward (cited pages back the claim
+// more often); Gemini and Copilot run a touch lower on accuracy in this demo.
+const trustEngineMod = {
+  chatgpt: { acc: 1.0, sup: 1.0, att: 1.0 },
+  "ai-overviews": { acc: 0.99, sup: 0.98, att: 1.0 },
+  gemini: { acc: 0.97, sup: 0.97, att: 0.98 },
+  perplexity: { acc: 1.0, sup: 1.08, att: 1.0 },
+  copilot: { acc: 0.98, sup: 0.96, att: 0.98 },
+};
+
+function trustP(check, brandId, engineId, w, flags) {
+  const base = trustBaseline[brandId];
+  if (!base) return null;
+  let p = base[check];
+  p *= trustEngineMod[engineId]?.[check] ?? 1;
+  // Firefly's licensed-data / commercial-safety wedge is sometimes credited to a
+  // competitor on the "safe for commercial use" prompt: a standing attribution gap.
+  if (check === "att" && brandId === "firefly" && flags.fireflyStrong) p = 0.7;
+  // On free how-to prompts the cited sources skew to competitor tutorials that
+  // only partly back the Acrobat workflow the answer describes: lower support.
+  if (check === "sup" && brandId === "acrobat" && flags.citationLeak) p -= 0.12;
+  // Planted event: after a plan change the engines have not caught up to, ChatGPT
+  // and Copilot state a stale free-tier claim on the free-edit prompt. Claim
+  // accuracy drops, then recovers over ~4 weeks.
+  if (
+    check === "acc" &&
+    brandId === "acrobat" &&
+    flags.accuracyRisk &&
+    (engineId === "chatgpt" || engineId === "copilot") &&
+    w >= ACROBAT_ACCURACY_DIP_WEEK
+  ) {
+    const recovery = Math.min(1, (w - ACROBAT_ACCURACY_DIP_WEEK) / 4);
+    p -= 0.36 * (1 - recovery);
+  }
+  return clamp(p, 0.3, 0.99);
+}
+
+const adjudicatedPrompts = promptPanel.map((p, idx) => ({ ...p, idx })).filter((p) => p.adjudicated);
+
+// Weekly judged counts per (adjudicated prompt, engine) for the Adobe brand.
+const trustWeekly = [];
+for (const p of adjudicatedPrompts) {
+  const cat = categories.find((c) => c.id === p.cat);
+  const adobe = cat.brands.find((b) => b.adobe);
+  const flags = { fireflyStrong: p.fireflyStrong, citationLeak: p.citationLeak, accuracyRisk: p.accuracyRisk };
+  for (let w = 0; w < N_WEEKS; w++) {
+    for (const eng of engines) {
+      const n = JUDGED_PER_PROMPT_ENGINE_WEEK;
+      trustWeekly.push({
+        w,
+        week: weekEndings[w],
+        c: p.cat,
+        e: eng.id,
+        b: adobe.id,
+        pIdx: p.idx,
+        judgedN: n,
+        accK: binomial(n, trustP("acc", adobe.id, eng.id, w, flags)),
+        supK: binomial(n, trustP("sup", adobe.id, eng.id, w, flags)),
+        attK: binomial(n, trustP("att", adobe.id, eng.id, w, flags)),
+      });
+    }
+  }
+}
+
+const POOL_FROM = N_WEEKS - TRUST_WINDOW;
+function poolTrust(rows) {
+  const jn = rows.reduce((s, r) => s + r.judgedN, 0);
+  const mk = (k) => {
+    if (jn === 0) return { rate: null, lo: null, hi: null, k: 0, n: 0 };
+    const ci = wilson(k, jn);
+    return { rate: round(k / jn), lo: round(ci.lo), hi: round(ci.hi), k, n: jn };
+  };
+  return {
+    claimAccuracy: mk(rows.reduce((s, r) => s + r.accK, 0)),
+    citationSupport: mk(rows.reduce((s, r) => s + r.supK, 0)),
+    attributionCorrectness: mk(rows.reduce((s, r) => s + r.attK, 0)),
+  };
+}
+
+// Per product, pooled across engines and adjudicated prompts over the window.
+const trustByProduct = categories.map((cat) => {
+  const adobe = cat.brands.find((b) => b.adobe);
+  const rows = trustWeekly.filter((r) => r.b === adobe.id && r.w >= POOL_FROM);
+  return { b: adobe.id, name: adobe.name, c: cat.id, window: TRUST_WINDOW, ...poolTrust(rows) };
+});
+
+// Headline story: Acrobat claim accuracy on ChatGPT for the free-edit prompt,
+// pooled pre-dip (6 weeks, n=72) vs the dip window (4 weeks, n=48).
+const acrobatFreeIdx = adjudicatedPrompts.find((p) => p.accuracyRisk).idx;
+const hlRows = (lo, hi) =>
+  trustWeekly.filter((r) => r.pIdx === acrobatFreeIdx && r.e === "chatgpt" && r.w >= lo && r.w <= hi);
+const hlPre = poolTrust(hlRows(ACROBAT_ACCURACY_DIP_WEEK - 6, ACROBAT_ACCURACY_DIP_WEEK - 1)).claimAccuracy;
+const hlDip = poolTrust(hlRows(ACROBAT_ACCURACY_DIP_WEEK, ACROBAT_ACCURACY_DIP_WEEK + 2)).claimAccuracy;
+// Two-proportion difference with its own CI, so the change is stated as a
+// contrast, not "one interval clears a line and the other does not".
+const twoPropDiff = (a, b) => {
+  const p1 = a.k / a.n;
+  const p2 = b.k / b.n;
+  const d = p2 - p1;
+  const se = Math.sqrt((p1 * (1 - p1)) / a.n + (p2 * (1 - p2)) / b.n);
+  return { diffPts: round(d), ciLo: round(d - 1.96 * se), ciHi: round(d + 1.96 * se) };
+};
+const headline = {
+  brand: "acrobat",
+  brandName: "Adobe Acrobat",
+  engine: "chatgpt",
+  promptText: promptPanel[acrobatFreeIdx].text,
+  dipWeek: weekEndings[ACROBAT_ACCURACY_DIP_WEEK],
+  pre: hlPre,
+  dip: hlDip,
+  change: twoPropDiff(hlPre, hlDip),
+};
+
+// Weekly trend for that story (rate only; noisy at n=12/week, read pooled).
+const headlineTrend = [];
+for (let w = 0; w < N_WEEKS; w++) {
+  const rows = trustWeekly.filter((r) => r.pIdx === acrobatFreeIdx && r.e === "chatgpt" && r.w === w);
+  const k = rows.reduce((s, r) => s + r.accK, 0);
+  const n = rows.reduce((s, r) => s + r.judgedN, 0);
+  headlineTrend.push({ w, week: weekEndings[w], rate: round(k / n) });
+}
+
+// Defect ranking: per (adjudicated prompt, engine), pool the window, take the
+// weakest check, and rank by expected wrong-claim volume, so a low pass rate on
+// a high-volume buying prompt outranks the same gap on a niche one.
+const trustDefects = [];
+for (const p of adjudicatedPrompts) {
+  const cat = categories.find((c) => c.id === p.cat);
+  const adobe = cat.brands.find((b) => b.adobe);
+  for (const eng of engines) {
+    const rows = trustWeekly.filter((r) => r.pIdx === p.idx && r.e === eng.id && r.w >= POOL_FROM);
+    const pooled = poolTrust(rows);
+    const checks = [
+      { key: "claimAccuracy", label: "claim accuracy", ...pooled.claimAccuracy },
+      { key: "citationSupport", label: "citation support", ...pooled.citationSupport },
+      { key: "attributionCorrectness", label: "attribution correctness", ...pooled.attributionCorrectness },
+    ];
+    const weakest = checks.reduce((a, b) => (b.rate < a.rate ? b : a));
+    trustDefects.push({
+      promptText: p.text,
+      category: p.cat,
+      intent: p.intent,
+      estWeeklyAsks: volAsks[p.vol],
+      brand: adobe.id,
+      brandName: adobe.name,
+      engine: eng.id,
+      check: weakest.key,
+      checkLabel: weakest.label,
+      rate: weakest.rate,
+      lo: weakest.lo,
+      hi: weakest.hi,
+      missPts: round(1 - weakest.rate),
+    });
+  }
+}
+trustDefects.sort((a, b) => (1 - b.rate) * b.estWeeklyAsks - (1 - a.rate) * a.estWeeklyAsks);
+const trustDefectsTop = trustDefects.slice(0, 8);
+
+// Two worked adjudication examples. Ground-truth notes are demo conventions,
+// never assertions about any product's real pricing or features.
+const trustExamples = [
+  {
+    engine: "ChatGPT",
+    promptText: "How do I edit a PDF for free?",
+    note: "Illustrative simulated answer, written for this demo, not captured from a real engine.",
+    answerText:
+      "You can edit a PDF for free right in Adobe Acrobat online: upload the file and use the free browser tools to change text, add comments, and sign. Free web tools like Smallpdf and iLovePDF also cover quick edits without an account.",
+    checks: [
+      {
+        label: "Claim accuracy",
+        verdict: "fail",
+        note: "For this demo we define Acrobat's correct free-tier scope as view, comment, and sign, with text editing on a paid plan. The answer states free in-browser text editing, which this demo treats as a stale claim from before a plan change. This is a demo convention, not a statement about Acrobat's real pricing.",
+      },
+      {
+        label: "Citation support",
+        verdict: "partial",
+        note: "The cited Acrobat page supports signing but not the free text-editing claim; the remaining support comes from competitor how-to pages.",
+      },
+      {
+        label: "Attribution correctness",
+        verdict: "pass",
+        note: "Acrobat is correctly identified as Adobe's product.",
+      },
+    ],
+  },
+  {
+    engine: "ChatGPT",
+    promptText: "Which AI image tool is safe for commercial use?",
+    note: "Illustrative simulated answer, written for this demo, not captured from a real engine.",
+    answerText:
+      "For commercial use, the safest pick is generally a model trained on licensed data, and several tools now offer commercial indemnification for enterprise customers. Check each vendor's terms before you ship work.",
+    checks: [
+      {
+        label: "Claim accuracy",
+        verdict: "pass",
+        note: "The general point about licensed training data and enterprise indemnification is accurate.",
+      },
+      {
+        label: "Attribution correctness",
+        verdict: "fail",
+        note: "The answer describes Firefly's differentiator, licensed training data plus enterprise IP indemnification, without naming Firefly, and in this simulation sometimes credits the position to a competitor. The wedge is real; the attribution is wrong.",
+      },
+      {
+        label: "Citation support",
+        verdict: "partial",
+        note: "Cited sources discuss commercial safety in general but do not tie the indemnification point to the right vendor.",
+      },
+    ],
+  },
+];
+
+const trust = {
+  note: "Simulated answer-correctness audit. A human judges a small sample of answers against a written ground-truth rubric (a measurement-and-adjudication design, not an automated fact checker). Every rate pools a multi-week window and carries a Wilson 95% interval because judged samples are small. All values are simulated.",
+  judgedPerPromptEngineWeek: JUDGED_PER_PROMPT_ENGINE_WEEK,
+  window: TRUST_WINDOW,
+  windowLabel: `${weekEndings[POOL_FROM]} to ${weekEndings[N_WEEKS - 1]}`,
+  adjudicatedPromptCount: adjudicatedPrompts.length,
+  totalPromptCount: promptPanel.length,
+  checks: [
+    {
+      key: "claimAccuracy",
+      name: "Claim accuracy",
+      def: "Of sampled answers that make a checkable factual claim about the product (price, free-tier contents, whether a feature exists), the share judged correct and current against the ground-truth rubric.",
+    },
+    {
+      key: "citationSupport",
+      name: "Citation support",
+      def: "Of sampled answers that cite a source for a claim about the product, the share where the cited page actually contains the claim and the link resolves to the right page.",
+    },
+    {
+      key: "attributionCorrectness",
+      name: "Attribution correctness",
+      def: "Of sampled answers naming the product, the share with no misattribution: no competitor feature credited to Adobe, and no Adobe capability credited to a competitor.",
+    },
+  ],
+  byProduct: trustByProduct,
+  headline,
+  headlineTrend,
+  defects: trustDefectsTop,
+  examples: trustExamples,
+  event: { week: weekEndings[ACROBAT_ACCURACY_DIP_WEEK], label: "Acrobat free-tier claim goes stale on the free-edit prompt" },
+};
+
+// ---------------------------------------------------------------------------
 // Write outputs
 // ---------------------------------------------------------------------------
 fs.mkdirSync(OUT_DIR, { recursive: true });
@@ -744,4 +1070,5 @@ write("funnel.json", { rows: funnel, assumptions: outcomeAssumptions });
 write("experiments.json", experiments);
 write("insights.json", insights);
 write("answers.json", answers);
-console.log(`rows: weekly=${weekly.length}, prompts=${prompts.length}, funnel=${funnel.length}`);
+write("trust.json", trust);
+console.log(`rows: weekly=${weekly.length}, prompts=${prompts.length}, funnel=${funnel.length}, trust=${trustWeekly.length}`);

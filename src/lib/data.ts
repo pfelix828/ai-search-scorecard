@@ -9,6 +9,7 @@ import funnelJson from "@/data/funnel.json";
 import experimentsJson from "@/data/experiments.json";
 import insightsJson from "@/data/insights.json";
 import answersJson from "@/data/answers.json";
+import trustJson from "@/data/trust.json";
 
 export interface Engine {
   id: string;
@@ -127,12 +128,31 @@ export interface FunnelRow {
   agenticHits: number;
 }
 
+/** One arm of the funnel where AI search can move revenue. */
+export interface WorthArm {
+  key: string;
+  label: string;
+  status: "modeled" | "scaffolded";
+  note: string;
+}
+
 export interface OutcomeAssumptions {
   referrerCaptureNote: string;
   signupRate: number;
   trialToPaid: number;
   arpuMonthly: number;
   grossMarginMonths: number;
+  worthArms: WorthArm[];
+}
+
+/** Treated-minus-control difference in differences, with a CI on the contrast. */
+export interface DidStats {
+  treatedDelta: number;
+  controlDelta: number;
+  did: number;
+  se: number;
+  ciLo: number;
+  ciHi: number;
 }
 
 export interface ExperimentSeriesPoint {
@@ -173,6 +193,7 @@ export interface Experiment {
   control?: ExperimentSeriesPoint[];
   treatedLift?: LiftStats | null;
   controlLift?: LiftStats | null;
+  did?: DidStats | null;
   perplexitySeries?: CitationSeriesPoint[];
   chatgptSeries?: CitationSeriesPoint[];
 }
@@ -194,6 +215,84 @@ export interface AnswerSnippet {
   citations: string[];
 }
 
+/** A pooled pass-rate for one correctness check, with a Wilson 95% interval. */
+export interface TrustRate {
+  /** 0..1 pooled pass rate; null if no judged sample in the window */
+  rate: number | null;
+  lo: number | null;
+  hi: number | null;
+  /** pass count and judged-sample size behind the rate */
+  k: number;
+  n: number;
+}
+
+export interface TrustProductRow {
+  b: string;
+  name: string;
+  c: string;
+  window: number;
+  claimAccuracy: TrustRate;
+  citationSupport: TrustRate;
+  attributionCorrectness: TrustRate;
+}
+
+export interface TrustHeadline {
+  brand: string;
+  brandName: string;
+  engine: string;
+  promptText: string;
+  dipWeek: string;
+  pre: TrustRate;
+  dip: TrustRate;
+  change: { diffPts: number; ciLo: number; ciHi: number };
+}
+
+export interface TrustDefect {
+  promptText: string;
+  category: string;
+  intent: string;
+  estWeeklyAsks: number;
+  brand: string;
+  brandName: string;
+  engine: string;
+  check: string;
+  checkLabel: string;
+  rate: number;
+  lo: number;
+  hi: number;
+  missPts: number;
+}
+
+export interface TrustExampleCheck {
+  label: string;
+  verdict: "pass" | "partial" | "fail";
+  note: string;
+}
+
+export interface TrustExample {
+  engine: string;
+  promptText: string;
+  note: string;
+  answerText: string;
+  checks: TrustExampleCheck[];
+}
+
+export interface Trust {
+  note: string;
+  judgedPerPromptEngineWeek: number;
+  window: number;
+  windowLabel: string;
+  adjudicatedPromptCount: number;
+  totalPromptCount: number;
+  checks: { key: string; name: string; def: string }[];
+  byProduct: TrustProductRow[];
+  headline: TrustHeadline;
+  headlineTrend: { w: number; week: string; rate: number }[];
+  defects: TrustDefect[];
+  examples: TrustExample[];
+  event: { week: string; label: string };
+}
+
 export const meta = metaJson as Meta;
 export const weekly = weeklyJson as WeeklyRow[];
 export const prompts = promptsJson as Prompt[];
@@ -201,6 +300,7 @@ export const funnel = funnelJson as { rows: FunnelRow[]; assumptions: OutcomeAss
 export const experiments = experimentsJson as Experiment[];
 export const insights = insightsJson as Insight[];
 export const answers = answersJson as Record<string, AnswerSnippet>;
+export const trust = trustJson as Trust;
 
 export const N_WEEKS = meta.weeks.length;
 export const LAST_WEEK = N_WEEKS - 1;

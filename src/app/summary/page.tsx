@@ -4,6 +4,7 @@ import {
   meta,
   prompts,
   experiments,
+  trust,
   weeklyRows,
   blendedSeries,
   adobeBrandOf,
@@ -106,9 +107,9 @@ export default function SummaryPage() {
     },
     {
       title: "Dollars come with assumptions attached",
-      body: `No engine reports impressions and most AI-influenced visits lose their referrer, so the revenue view is a proxy model with every assumption stated and adjustable, not false precision.`,
+      body: `No engine reports impressions and most AI-influenced visits lose their referrer, so the revenue view models the acquisition arm with every assumption stated and adjustable, and names the existing-customer and plan-upgrade arms as gaps rather than minting numbers it cannot support.`,
       link: "/outcomes",
-      linkLabel: "The proxy model",
+      linkLabel: "Worth across the funnel",
     },
   ];
 
@@ -139,8 +140,23 @@ export default function SummaryPage() {
             page rather than buried in a model.
           </p>
           <p>
-            It is built to extend a first-generation visibility stack, not replace it: the uncertainty quantification,
-            experiment discipline, and outcome modeling that turn a tracker into evidence.
+            It is built to extend a measurement system that already exists, not replace it. Getting a brand mentioned,
+            cited, and ranked in AI answers is what visibility tools are built to do, and this app speaks their
+            vocabulary on purpose. Three habits make every number here defensible: each rate carries a confidence
+            interval, content and PR work is read against a control panel, and model updates are logged as events
+            rather than read as wins and losses.
+          </p>
+          <p>
+            The two questions a visibility tool does not answer are where this project does its real work: is what the
+            engine says actually true, on the{" "}
+            <Link href="/trust" className="font-medium text-accent underline decoration-dotted underline-offset-2 hover:decoration-solid">
+              Answer Trust
+            </Link>{" "}
+            page, and what is it worth across the whole funnel rather than just first-week sessions, on the{" "}
+            <Link href="/outcomes" className="font-medium text-accent underline decoration-dotted underline-offset-2 hover:decoration-solid">
+              Outcomes
+            </Link>{" "}
+            page. Visibility is the table stakes; correctness and worth are the frontier.
           </p>
         </div>
         <div className="mt-4 grid grid-cols-2 gap-3 border-t border-border-subtle pt-4 sm:grid-cols-3 lg:grid-cols-6">
@@ -150,6 +166,44 @@ export default function SummaryPage() {
               <div className="mt-0.5 text-[11px] leading-tight text-muted">{s.l}</div>
             </div>
           ))}
+        </div>
+      </Card>
+
+      {/* 1b. The frontier past visibility */}
+      <Card>
+        <CardTitle sub="Visibility tools optimize who gets mentioned and cited. The two open problems past that are whether the answer is true and what it is worth across the funnel. This project works on both.">
+          The frontier, past visibility
+        </CardTitle>
+        <div className="grid gap-3 md:grid-cols-2">
+          <div className="rounded-lg border border-border-subtle bg-zinc-50 p-4">
+            <p className="text-sm font-semibold tracking-tight">Is it true?</p>
+            <p className="mt-1.5 text-xs leading-relaxed text-muted">
+              A product can be highly visible and confidently wrong. In this simulated quarter Acrobat&apos;s claim
+              accuracy on a high-volume free-editing prompt fell from {pct(trust.headline.pre.rate ?? 0)} to{" "}
+              {pct(trust.headline.dip.rate ?? 0)} during a stale-claim window, a drop a visibility-only read scores as a
+              win. Measured as a sampled, human-judged audit with confidence intervals.
+            </p>
+            <Link
+              href="/trust"
+              className="mt-2 inline-block text-xs font-medium text-accent underline decoration-dotted underline-offset-2 hover:decoration-solid"
+            >
+              Answer Trust: the correctness axis
+            </Link>
+          </div>
+          <div className="rounded-lg border border-border-subtle bg-zinc-50 p-4">
+            <p className="text-sm font-semibold tracking-tight">What is it worth?</p>
+            <p className="mt-1.5 text-xs leading-relaxed text-muted">
+              AI answers can move revenue in three places: new-user acquisition, existing-customer growth, and plan
+              upgrades. The acquisition arm is modeled end to end with every assumption on a slider; the other two are
+              named as honest gaps rather than guessed, because sizing them needs data this demo does not have.
+            </p>
+            <Link
+              href="/outcomes"
+              className="mt-2 inline-block text-xs font-medium text-accent underline decoration-dotted underline-offset-2 hover:decoration-solid"
+            >
+              Outcomes: worth across the funnel
+            </Link>
+          </div>
         </div>
       </Card>
 
@@ -227,7 +281,7 @@ export default function SummaryPage() {
       <Card>
         <div className="flex flex-wrap items-center justify-between gap-3">
           <p className="text-sm text-foreground/85">
-            This week's read: portfolio{" "}
+            This week&apos;s read: portfolio{" "}
             <Term def="Simple average of the five products' usage-weighted Visibility Scores. A summary read for trend and target tracking.">
               Visibility Score
             </Term>{" "}

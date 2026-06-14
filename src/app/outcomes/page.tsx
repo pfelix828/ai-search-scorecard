@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { funnel, meta, LAST_WEEK, latestWeekEnding } from "@/lib/data";
 import { num, pct, shortDate } from "@/lib/format";
 import { Card, CardTitle, PageHeader, Pill, SimulatedDataNote, Stat, Term } from "@/components/ui";
@@ -9,7 +10,7 @@ import { ProxyModel } from "@/components/outcomes/proxy-model";
 export const metadata: Metadata = {
   title: "Outcomes · AI Search Visibility Scorecard",
   description:
-    "An assumption-driven proxy model connecting AI search visibility to signups, paying users, and revenue. Simulated demo data.",
+    "What AI search visibility is worth across the funnel. An assumption-driven proxy model for the acquisition arm, with the existing-customer and plan-upgrade arms named as honest gaps. Simulated demo data.",
 };
 
 const latestRows = funnel.rows.filter((r) => r.w === LAST_WEEK);
@@ -62,10 +63,52 @@ export default function OutcomesPage() {
     <div className="space-y-6">
       <PageHeader
         title="Outcomes"
-        subtitle="Proxies and heuristics that connect AI search visibility to signups, paying users, and revenue, because direct click-by-click attribution is not possible. Every assumption is stated and adjustable."
+        subtitle="What AI search visibility is worth across the funnel. AI answers can move revenue in three places, not just one. This page models the acquisition arm honestly and names the other two as gaps rather than guessing at them."
         right={<Pill>Latest week: {shortDate(latestWeekEnding)}</Pill>}
       />
       <SimulatedDataNote />
+
+      {/* 0. The funnel, not just the front door */}
+      <Card>
+        <CardTitle sub="AI search can create value at three points in the funnel. Only the first is modeled here; the other two are shown as stated gaps because honestly sizing them needs data this demo does not have.">
+          The funnel, not just the front door
+        </CardTitle>
+        <div className="grid gap-3 md:grid-cols-3">
+          {funnel.assumptions.worthArms.map((arm, i) => {
+            const modeled = arm.status === "modeled";
+            return (
+              <div
+                key={arm.key}
+                className={
+                  "rounded-lg border p-4 " +
+                  (modeled ? "border-accent/40 bg-accent-soft/40" : "border-dashed border-border-subtle bg-zinc-50")
+                }
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-[11px] font-medium text-muted">Arm {i + 1} of 3</span>
+                  <span
+                    className={
+                      "rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide " +
+                      (modeled ? "bg-accent text-white" : "bg-zinc-200 text-zinc-600")
+                    }
+                  >
+                    {modeled ? "Modeled" : "Stated gap"}
+                  </span>
+                </div>
+                <div className="mt-1.5 text-sm font-semibold tracking-tight">{arm.label}</div>
+                <p className="mt-1 text-xs leading-snug text-muted">{arm.note}</p>
+              </div>
+            );
+          })}
+        </div>
+        <p className="mt-3 text-xs leading-relaxed text-muted">
+          Showing two arms as gaps is deliberate. The honest version of full-funnel worth is to model the arm the data
+          supports and be explicit about the two that would need in-product adoption events, cross-product entitlement
+          joins, and plan-mix data to size. Minting an existing-customer revenue figure from a made-up touch volume
+          would be the kind of false precision this scorecard avoids everywhere else. Sizing the prize is the
+          strategist&apos;s job here; turning it into a budget move is the operator&apos;s.
+        </p>
+      </Card>
 
       {/* 1. The attribution problem */}
       <Card>
@@ -188,6 +231,22 @@ export default function OutcomesPage() {
           </Card>
         </div>
       </ProxyModel>
+
+      {/* 5b. The accuracy assumption baked into the proxy */}
+      <Card>
+        <CardTitle>One assumption this proxy makes quietly</CardTitle>
+        <p className="text-sm leading-6 text-foreground/85">
+          The chain above assumes the answer the buyer reads is correct. When an engine states a wrong free-tier or
+          price on a high-volume buying prompt, some of those modeled signups never happen, so an accuracy defect is a
+          revenue leak this proxy does not subtract. This scorecard now measures that defect rate directly rather than
+          assuming it away.{" "}
+          <Link href="/trust" className="font-medium text-accent underline decoration-dotted underline-offset-2 hover:decoration-solid">
+            See Answer Trust
+          </Link>
+          . Putting a dollar figure on the leak would need a join this demo does not have, so it is named here, not
+          guessed.
+        </p>
+      </Card>
 
       {/* 6. Real-world reference points */}
       <Card className="border-emerald-200 bg-emerald-50/40">

@@ -9,6 +9,7 @@ const items = [
   { href: "/", label: "Overview" },
   { href: "/categories", label: "Categories" },
   { href: "/prompts", label: "Prompt Panel" },
+  { href: "/trust", label: "Answer Trust" },
   { href: "/outcomes", label: "Outcomes" },
   { href: "/experiments", label: "Experiments" },
   { href: "/methodology", label: "Methodology" },

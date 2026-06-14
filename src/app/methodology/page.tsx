@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import Link from "next/link";
 import { meta, prompts } from "@/lib/data";
 import { Card, CardTitle, PageHeader, Pill, SimulatedDataNote, Term } from "@/components/ui";
 
@@ -184,6 +185,41 @@ export default function MethodologyPage() {
                 </td>
               </tr>
               <tr>
+                <td className={`${td} font-medium whitespace-nowrap`}>Claim accuracy</td>
+                <td className={td}>
+                  Of sampled answers making a checkable factual claim about the product (price, free-tier contents,
+                  whether a feature exists), the share judged correct and current against a maintained ground-truth
+                  rubric.
+                </td>
+                <td className={td}>
+                  Judged on a sample, not every run, so reported pooled over a multi-week window with a Wilson interval.
+                  Tracked on the Answer Trust page, separate from the Visibility Score.
+                </td>
+              </tr>
+              <tr>
+                <td className={`${td} font-medium whitespace-nowrap`}>Citation support</td>
+                <td className={td}>
+                  Of sampled answers that cite a source for a claim, the share where the cited page actually contains
+                  the claim and the link resolves. Different from citation share: a page can be cited often and still
+                  not back the claim.
+                </td>
+                <td className={td}>
+                  Judged on the same sample. Low support with high citation share is a content and page-hygiene fix, not
+                  a visibility gap.
+                </td>
+              </tr>
+              <tr>
+                <td className={`${td} font-medium whitespace-nowrap`}>Attribution correctness</td>
+                <td className={td}>
+                  Of sampled answers naming the product, the share with no misattribution: no competitor feature
+                  credited to Adobe, and no Adobe capability credited to a competitor.
+                </td>
+                <td className={td}>
+                  Judged on the same sample. A low rate on a differentiated claim means the engine is handing the wedge
+                  to a competitor.
+                </td>
+              </tr>
+              <tr>
                 <td className={`${td} font-medium whitespace-nowrap`}>Sentiment</td>
                 <td className={td}>
                   Average tone of the language around the mention, scored from -1 (negative) to +1 (positive).
@@ -219,6 +255,18 @@ export default function MethodologyPage() {
             Brand Presence docs
           </Ext>
           ).
+        </p>
+        <p className="mt-3 text-sm leading-6 text-foreground/85">
+          Correctness is deliberately kept out of this composite. Claim accuracy, citation support, and attribution
+          correctness measure whether the answer is true, which is a different question from how visible the brand is,
+          so they live as their own axis on the{" "}
+          <Link href="/trust" className="underline decoration-dotted underline-offset-2 hover:text-foreground">
+            Answer Trust
+          </Link>{" "}
+          page rather than getting blended into one number. A high Visibility Score with a low accuracy rate is exactly
+          the case a single composite would hide. The correctness checks are a sampled, human-adjudication design (a
+          person scores a small sample against a written rubric, reported as rates with Wilson intervals), not an
+          automated fact checker.
         </p>
       </Card>
 
@@ -312,6 +360,15 @@ export default function MethodologyPage() {
                   <Ext href="https://business.adobe.com/products/llm-optimizer/pricing.html">Pricing</Ext>
                 </td>
               </tr>
+              <tr>
+                <td className={td}>Answer Trust: claim accuracy, citation support, attribution correctness</td>
+                <td className={td}>
+                  Not a published LLM Optimizer metric. The product reports citations and visibility; correctness is
+                  named as a new challenge in this role&rsquo;s job description (&ldquo;accuracy&rdquo; and
+                  &ldquo;trust&rdquo;), and this app measures it as the layer above visibility.
+                </td>
+                <td className={td}>Beyond the published metric set</td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -393,6 +450,14 @@ export default function MethodologyPage() {
             The point of stating the chain explicitly is to build proxies and heuristics where direct attribution is
             not possible, and to make every assumption visible enough for a stakeholder to challenge.
           </P>
+          <P>
+            This chain is the acquisition arm of the funnel. AI answers can also move revenue through existing-customer
+            growth (cross-product adoption and seat expansion) and plan upgrades (which plan a new buyer lands on). The
+            Outcomes page names those two arms as stated gaps rather than modeling them, because sizing them honestly
+            needs in-product adoption events, cross-product entitlement joins, and plan-mix data this demo does not
+            have. Modeling them from a guessed volume would be the false precision this framework avoids everywhere
+            else.
+          </P>
         </div>
       </Card>
 
@@ -441,6 +506,17 @@ export default function MethodologyPage() {
             self-reported and usually single-source. Treat them as directional.
           </li>
           <li>
+            Answer correctness is judged on a small sample, so it needs a written rubric and more than one judge: two
+            people can disagree on &ldquo;partially correct.&rdquo; A real audit dual-judges a subset and reports
+            inter-rater agreement, which this demo does not model. Every correctness rate is pooled over a multi-week
+            window because single-week judged samples are too small to read.
+          </li>
+          <li>
+            The outcomes view models the acquisition arm of the funnel only. Existing-customer growth and plan upgrades
+            are named as gaps, not modeled, because there is no honest way to size them without in-product and plan-mix
+            data.
+          </li>
+          <li>
             This demo&rsquo;s data is simulated end to end. The pipeline, statistics, and vocabulary are real; the numbers
             are not.
           </li>
@@ -463,8 +539,9 @@ export default function MethodologyPage() {
             The generator also plants narrative events so the pages have something honest to read: a help-content
             experiment that lifts treated Adobe Express prompts after mid-March, a Gemini model update that
             depresses mention rates for about three weeks in April, a Photoshop sentiment dip during a simulated
-            pricing news cycle, a Firefly gap on generic discovery prompts, and Acrobat citation leakage to
-            competitor how-to content.
+            pricing news cycle, a Firefly gap on generic discovery prompts, Acrobat citation leakage to
+            competitor how-to content, and an Acrobat answer-accuracy dip where ChatGPT and Copilot keep repeating a
+            stale free-tier claim on the free-edit prompt for a few weeks before their source material catches up.
           </P>
           <P>
             No real answer-engine sampling was run, no Adobe data was used, and nothing here is a claim about how any
@@ -568,17 +645,26 @@ export default function MethodologyPage() {
       </Card>
 
       <Card>
-        <CardTitle>What this adds to a first-generation stack</CardTitle>
+        <CardTitle>The layer on top of the visibility stack</CardTitle>
         <P>
           A team measuring AI search seriously in 2026 already has a first version: a prompt set, a visibility read,
-          some referral tracking. This framework is designed to extend that kind of foundation, not replace it. The
-          three additions it argues for are uncertainty quantification (every rate carries an interval, so a weekly
-          read can be defended in a budget conversation), controlled experiments (treated-vs-control prompt panels, so
-          content and PR work gets a controlled read instead of a before/after correlation), and drift monitoring
-          (engine model updates get logged and annotated as measurement events, not read as phantom wins and losses). One more reason the
-          citation metrics matter for the long game: the sources engines cite are dominated by evergreen content, so
-          the tutorial or review published this quarter is next quarter&apos;s answer corpus. Citation-building
-          compounds; campaign spikes do not.
+          some referral tracking, the layer that tools like Adobe LLM Optimizer are built to serve. This framework is
+          designed to sit on top of that, not replace it. It hardens the visibility read with three habits, uncertainty
+          quantification (every rate carries an interval, so a weekly read can be defended in a budget conversation),
+          controlled experiments (treated-vs-control prompt panels, so content and PR work gets a controlled read
+          instead of a before/after correlation), and drift monitoring (engine model updates get logged and annotated
+          as measurement events, not read as phantom wins and losses). On top of that it adds the two questions a
+          visibility tool does not answer: whether the answer is correct, on the{" "}
+          <Link href="/trust" className="underline decoration-dotted underline-offset-2 hover:text-foreground">
+            Answer Trust
+          </Link>{" "}
+          page, and what a mention is worth across the funnel, on the{" "}
+          <Link href="/outcomes" className="underline decoration-dotted underline-offset-2 hover:text-foreground">
+            Outcomes
+          </Link>{" "}
+          page. One more reason the citation metrics matter for the long game: the sources engines cite are dominated by
+          evergreen content, so the tutorial or review published this quarter is next quarter&apos;s answer corpus.
+          Citation-building compounds; campaign spikes do not.
         </P>
       </Card>
 

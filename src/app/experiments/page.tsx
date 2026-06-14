@@ -128,11 +128,17 @@ export default function ExperimentsPage() {
             : any single week of sampled answers is noisy, so reads pool roughly six weeks on each side.
           </p>
           <p>
-            A lift only counts when its{" "}
+            The quantity that actually settles it is the treated change minus the control change, the{" "}
+            <Term def="Treated pre-to-post change minus control pre-to-post change. It nets out whatever the engines did on their own, leaving the part attributable to the change shipped behind the treated panel.">
+              difference in differences
+            </Term>
+            , reported with a{" "}
             <Term def="The range the true value would land in about 95 times out of 100 if the same sampling were repeated. Wider interval means less certainty.">
               95% confidence interval
             </Term>{" "}
-            sits clearly above zero while the control stays flat.
+            on that contrast. Eyeballing whether the treated interval clears zero while the control&apos;s does not is a
+            common shortcut, but two intervals can each behave that way without their difference being real, so the
+            honest read is the contrast itself.
           </p>
         </div>
       </Card>
@@ -178,6 +184,28 @@ export default function ExperimentsPage() {
               value={`${signedPts(cl.liftPts)} pts`}
               sub={`95% CI ${signedPts(cl.ciLo)} to ${signedPts(cl.ciHi)} pts, flat`}
             />
+          </div>
+        ) : null}
+
+        {express.did ? (
+          <div className="mt-3 rounded-lg border-l-4 border-emerald-400 bg-emerald-50/60 p-4">
+            <div className="flex flex-wrap items-baseline justify-between gap-2">
+              <span className="text-sm font-semibold tracking-tight">
+                The estimand: treated change minus control change
+              </span>
+              <span className="text-lg font-bold tabular-nums text-emerald-800">
+                {signedPts(express.did.did)} pts
+                <span className="ml-1.5 text-xs font-normal text-emerald-700">
+                  95% CI {signedPts(express.did.ciLo)} to {signedPts(express.did.ciHi)} pts
+                </span>
+              </span>
+            </div>
+            <p className="mt-1.5 text-xs leading-relaxed text-muted">
+              {signedPts(express.did.treatedDelta)} pts treated minus {signedPts(express.did.controlDelta)} pts control
+              leaves a {signedPts(express.did.did)} pt difference in differences, and its interval clears zero, so this
+              is the headline number the experiment supports, not the raw treated lift. This is the contrast a before
+              and after read cannot produce.
+            </p>
           </div>
         ) : null}
 
